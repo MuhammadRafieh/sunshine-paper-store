@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  length      Float
+  width       Float
+  gsm         Int
+  quantity    Int
+  unit        String
+  lowStockThreshold Int @default(10)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+  transactions CustomerTransaction[]
+}
+
+model Vendor {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  purchases   Purchase[]
+  transactions VendorTransaction[]
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  items          OrderItem[]
+  totalAmount    Float
+  paidAmount     Float    @default(0)
+  status         String   @default("pending")
+  paymentStatus  String   @default("unpaid")
+  isCancelled    Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  inventoryItemId String?
+  inventoryItem InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+  name        String
+  category    String
+  length      Float
+  width       Float
+  gsm         Int
+  unit        String
+  quantity    Int
+  rate        Float
+  total       Float
+  createdAt   DateTime @default(now())
+}
+
+model Purchase {
+  id              String   @id @default(cuid())
+  vendorId        String
+  vendor          Vendor   @relation(fields: [vendorId], references: [id])
+  items          PurchaseItem[]
+  totalAmount    Float
+  paidAmount     Float    @default(0)
+  status         String   @default("pending")
+  paymentStatus  String   @default("unpaid")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PurchaseItem {
+  id          String   @id @default(cuid())
+  purchaseId  String
+  purchase    Purchase @relation(fields: [purchaseId], references: [id])
+  name        String
+  category    String
+  length      Float
+  width       Float
+  gsm         Int
+  quantity    Int
+  unit        String
+  rate        Float
+  total       Float
+  createdAt   DateTime @default(now())
+}
+
+model CustomerTransaction {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  type        String
+  amount      Float
+  description String
+  paymentMode String?
+  reference   String?
+  balance     Float
+  createdAt   DateTime @default(now())
+}
+
+model VendorTransaction {
+  id          String   @id @default(cuid())
+  vendorId    String
+  vendor      Vendor   @relation(fields: [vendorId], references: [id])
+  type        String
+  amount      Float
+  description String
+  paymentMode String?
+  reference   String?
+  balance     Float
+  createdAt   DateTime @default(now())
+}
