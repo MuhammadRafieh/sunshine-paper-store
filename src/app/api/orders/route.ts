@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { customerId, items, totalAmount, paidAmount, status, paymentMode, reference } = body;
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const paymentStatus = parseFloat(paidAmount) >= parseFloat(totalAmount) ? 'paid' : 'unpaid';
       
       const newOrder = await tx.order.create({

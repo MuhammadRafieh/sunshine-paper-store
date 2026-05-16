@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -42,7 +43,7 @@ export async function PATCH(
     }
 
     if (body.cancelOrder === true) {
-      const result = await prisma.$transaction(async (tx) => {
+      const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         const customer = await tx.customer.findUnique({
           where: { id: currentOrder.customerId },
           include: {
@@ -178,7 +179,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const customer = await tx.customer.findUnique({
         where: { id: order.customerId },
         include: {

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { vendorId, items, totalAmount, paidAmount } = body;
 
-    const purchase = await prisma.$transaction(async (tx) => {
+    const purchase = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const newPurchase = await tx.purchase.create({
         data: {
           vendorId,
@@ -147,7 +148,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const vendor = await tx.vendor.findUnique({
         where: { id: purchase.vendorId },
         include: {
