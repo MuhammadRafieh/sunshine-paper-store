@@ -1,6 +1,6 @@
 # Sunshine Paper Store - Local Paper Merchant Management System
 
-A comprehensive inventory and order management system for a local paper merchant business. Built with Next.js, Prisma, and SQLite.
+A comprehensive inventory and order management system for a local paper merchant business. Built with Next.js, Prisma, and PostgreSQL.
 
 ## Features
 
@@ -17,7 +17,7 @@ A comprehensive inventory and order management system for a local paper merchant
 |----------|------------|
 | Frontend | Next.js 16, React 19, TypeScript |
 | Styling | Tailwind CSS v4 |
-| Database | SQLite |
+| Database | PostgreSQL (Neon) |
 | ORM | Prisma 5.22 |
 | Icons | Lucide React |
 
